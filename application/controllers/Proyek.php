@@ -124,4 +124,88 @@ class Proyek extends CI_Controller {
             }
         }
     }
+
+    public function edit_lokasi($id) {
+        $api_url = 'http://localhost:8080/lokasi/' . $id;
+    
+        // Inisialisasi cURL
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET"); // Set metode GET
+    
+        // Eksekusi cURL
+        $response = curl_exec($ch);
+    
+        // Cek apakah terjadi error
+        if (curl_errno($ch)) {
+            $error_msg = curl_error($ch);
+            curl_close($ch);
+            $this->session->set_flashdata('message', 'Gagal mengambil data lokasi: ' . $error_msg);
+            redirect('proyek/create_lokasi');
+        }
+    
+        // Tutup cURL
+        curl_close($ch);
+    
+        // Decode data JSON
+        $data['lokasi'] = json_decode($response, true);
+    
+        if ($data['lokasi'] === NULL) {
+            $this->session->set_flashdata('message', 'Data lokasi tidak ditemukan');
+            redirect('proyek/create_lokasi');
+        }
+    
+        // Load view untuk edit lokasi
+        $this->load->view('edit_lokasi_view', $data);
+    }
+    
+    
+
+    public function update_lokasi($id) {
+        // Validasi form
+        $this->form_validation->set_rules('nama_lokasi', 'Nama Lokasi', 'required');
+        $this->form_validation->set_rules('negara', 'Negara', 'required');
+        $this->form_validation->set_rules('provinsi', 'Provinsi', 'required');
+        $this->form_validation->set_rules('kota', 'Kota', 'required');
+    
+        if ($this->form_validation->run() === FALSE) {
+            // Jika validasi gagal, tampilkan form kembali dengan pesan error
+            $this->edit_lokasi($id);
+        } else {
+            // Data dari form
+            $data = array(
+                'nama_lokasi' => $this->input->post('nama_lokasi'),
+                'negara' => $this->input->post('negara'),
+                'provinsi' => $this->input->post('provinsi'),
+                'kota' => $this->input->post('kota')
+            );
+    
+            // Kirim data ke REST API untuk update
+            $api_url = 'http://localhost:8080/lokasi/' . $id;
+    
+            // Inisialisasi cURL
+            $ch = curl_init($api_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT"); // Set metode PUT
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // Data JSON untuk PUT
+    
+            // Eksekusi cURL
+            $result = curl_exec($ch);
+    
+            // Cek apakah terjadi error
+            if (curl_errno($ch)) {
+                $error_msg = curl_error($ch);
+                curl_close($ch);
+                $this->session->set_flashdata('message', 'Gagal memperbarui data lokasi: ' . $error_msg);
+                $this->edit_lokasi($id);
+            } else {
+                curl_close($ch);
+                $this->session->set_flashdata('message', 'Data lokasi berhasil diperbarui');
+                redirect('proyek/create_lokasi');
+            }
+        }
+    }
+    
 }

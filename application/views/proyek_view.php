@@ -50,6 +50,7 @@
                 <strong>Negara:</strong> <?php echo $item['negara']; ?><br>
                 <strong>Provinsi:</strong> <?php echo $item['provinsi']; ?><br>
                 <strong>Kota:</strong> <?php echo $item['kota']; ?><br>
+                <a href="<?php echo site_url('edit-lokasi/' . $item['id']); ?>">Edit</a>
             </li>
         <?php endforeach; ?>
         </ul>
