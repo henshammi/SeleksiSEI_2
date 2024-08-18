@@ -34,6 +34,7 @@
                         <li><?php echo $lokasi['nama_lokasi'] . ', ' . $lokasi['kota'] . ', ' . $lokasi['provinsi'] . ', ' . $lokasi['negara']; ?></li>
                     <?php endforeach; ?>
                 </ul>
+                <a href="<?php echo site_url('edit-proyek/' . $item['id']); ?>">Edit</a>
             </li>
         <?php endforeach; ?>
         </ul>

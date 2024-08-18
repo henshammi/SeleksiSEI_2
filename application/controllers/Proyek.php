@@ -207,5 +207,73 @@ class Proyek extends CI_Controller {
             }
         }
     }
+
+    public function edit_proyek($id) {
+        // Ambil data proyek dari REST API
+        $api_url = 'http://localhost:8080/proyek/' . $id;
+        $ch = curl_init($api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
     
+        if ($response === FALSE) {
+            $this->session->set_flashdata('message', 'Gagal mengambil data proyek');
+            redirect('proyek');
+        }
+    
+        $data['proyek'] = json_decode($response, true);
+        
+        if ($data['proyek'] === NULL) {
+            $this->session->set_flashdata('message', 'Data proyek tidak ditemukan');
+            redirect('proyek');
+        }
+    
+        // Tampilkan view edit proyek
+        $this->load->view('edit_proyek_view', $data);
+    }
+    
+    public function update_proyek($id) {
+        // Validasi form
+        $this->form_validation->set_rules('nama_proyek', 'Nama Proyek', 'required');
+        $this->form_validation->set_rules('client', 'Client', 'required');
+        $this->form_validation->set_rules('tgl_mulai', 'Tanggal Mulai', 'required');
+        $this->form_validation->set_rules('tgl_selesai', 'Tanggal Selesai', 'required');
+        $this->form_validation->set_rules('pimpinan_proyek', 'Pimpinan Proyek', 'required');
+        $this->form_validation->set_rules('keterangan', 'Keterangan', 'required');
+    
+        if ($this->form_validation->run() === FALSE) {
+            // Jika validasi gagal, tampilkan form kembali dengan pesan error
+            $this->edit_proyek($id);
+        } else {
+            // Data dari form
+            $data = array(
+                'nama_proyek' => $this->input->post('nama_proyek'),
+                'client' => $this->input->post('client'),
+                'tgl_mulai' => $this->input->post('tgl_mulai'),
+                'tgl_selesai' => $this->input->post('tgl_selesai'),
+                'pimpinan_proyek' => $this->input->post('pimpinan_proyek'),
+                'keterangan' => $this->input->post('keterangan')
+            );
+    
+            // Kirim data ke REST API untuk update
+            $api_url = 'http://localhost:8080/proyek/' . $id;
+            $ch = curl_init($api_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT"); // Set metode PUT
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // Data JSON untuk PUT
+            $result = curl_exec($ch);
+    
+            if ($result === FALSE) {
+                $error_msg = curl_error($ch);
+                curl_close($ch);
+                $this->session->set_flashdata('message', 'Gagal memperbarui data proyek: ' . $error_msg);
+                $this->edit_proyek($id);
+            } else {
+                curl_close($ch);
+                $this->session->set_flashdata('message', 'Data proyek berhasil diperbarui');
+                redirect('proyek');
+            }
+        }
+    }    
 }

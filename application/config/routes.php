@@ -60,3 +60,5 @@ $route['store-proyek'] = 'proyek/store_proyek';
 
 $route['edit-lokasi/(:num)'] = 'proyek/edit_lokasi/$1';
 $route['update-lokasi/(:num)'] = 'proyek/update_lokasi/$1';
+$route['edit-proyek/(:num)'] = 'proyek/edit_proyek/$1';
+$route['update-proyek/(:num)'] = 'proyek/update_proyek/$1';
