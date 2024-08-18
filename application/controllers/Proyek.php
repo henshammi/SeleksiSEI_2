@@ -276,4 +276,61 @@ class Proyek extends CI_Controller {
             }
         }
     }    
+
+    public function delete_proyek($id) {
+        // Pastikan ID valid
+        if (!$id) {
+            $this->session->set_flashdata('message', 'ID proyek tidak valid');
+            redirect('proyek');
+        }
+
+        // Kirim permintaan DELETE ke REST API
+        $api_url = 'http://localhost:8080/proyek/' . $id;
+        $ch = curl_init($api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        $result = curl_exec($ch);
+
+        // Cek apakah ada error dalam cURL
+        if ($result === FALSE) {
+            $error_msg = curl_error($ch);
+            curl_close($ch);
+            $this->session->set_flashdata('message', 'Gagal menghapus data proyek: ' . $error_msg);
+        } else {
+            curl_close($ch);
+            $this->session->set_flashdata('message', 'Data proyek berhasil dihapus');
+        }
+
+        redirect('proyek');
+    }
+
+    // Method untuk menghapus lokasi
+    public function delete_lokasi($id) {
+        // Pastikan ID valid
+        if (!$id) {
+            $this->session->set_flashdata('message', 'ID lokasi tidak valid');
+            redirect('proyek');
+        }
+
+        // Kirim permintaan DELETE ke REST API
+        $api_url = 'http://localhost:8080/lokasi/' . $id;
+        $ch = curl_init($api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        $result = curl_exec($ch);
+
+        // Cek apakah ada error dalam cURL
+        if ($result === FALSE) {
+            $error_msg = curl_error($ch);
+            curl_close($ch);
+            $this->session->set_flashdata('message', 'Gagal menghapus data lokasi: ' . $error_msg);
+        } else {
+            curl_close($ch);
+            $this->session->set_flashdata('message', 'Data lokasi berhasil dihapus');
+        }
+
+        redirect('proyek');
+    }
 }

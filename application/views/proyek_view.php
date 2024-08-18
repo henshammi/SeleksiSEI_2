@@ -35,6 +35,7 @@
                     <?php endforeach; ?>
                 </ul>
                 <a href="<?php echo site_url('edit-proyek/' . $item['id']); ?>">Edit</a>
+                <a href="<?= base_url('proyek/delete_lokasi/' . $item['id']); ?>" onclick="return confirm('Anda yakin ingin menghapus proyek ini?');">Hapus</a>
             </li>
         <?php endforeach; ?>
         </ul>
@@ -52,6 +53,7 @@
                 <strong>Provinsi:</strong> <?php echo $item['provinsi']; ?><br>
                 <strong>Kota:</strong> <?php echo $item['kota']; ?><br>
                 <a href="<?php echo site_url('edit-lokasi/' . $item['id']); ?>">Edit</a>
+                <a href="<?= base_url('proyek/delete_lokasi/' . $item['id']); ?>" onclick="return confirm('Anda yakin ingin menghapus proyek ini?');">Hapus</a>
             </li>
         <?php endforeach; ?>
         </ul>
